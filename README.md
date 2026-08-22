@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Central de Resultados — H Performance LLC
 
-## Getting Started
+Sistema web que substitui a planilha `Controle_Resultados_Clientes.xlsx`: lançamento semanal de
+resultados de Delivery Apps e Meta Ads por cliente, e um dashboard mensal consolidado.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Next.js (App Router) + TypeScript + Tailwind CSS v4 + Supabase (banco de dados Postgres +
+autenticação).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Configuração (passo a passo)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Criar um projeto no Supabase**: acesse https://app.supabase.com, crie uma conta/organização
+   e um novo projeto (escolha uma senha de banco e guarde-a).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Rodar o schema**: no painel do projeto, abra **SQL Editor**, cole o conteúdo do arquivo
+   [`supabase/schema.sql`](./supabase/schema.sql) e execute. Isso cria as tabelas `clients`,
+   `delivery_entries`, `meta_ads_entries`, já com os 8 clientes cadastrados e as políticas de
+   segurança (RLS).
 
-## Learn More
+3. **Criar seu usuário de login**: no painel, vá em **Authentication → Users → Add user**, crie
+   seu e-mail e senha (ou dos demais membros da equipe que vão lançar dados).
 
-To learn more about Next.js, take a look at the following resources:
+4. **Pegar as credenciais do projeto**: em **Project Settings → API**, copie a **Project URL** e
+   a **anon public key**.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. **Configurar variáveis de ambiente**: copie `.env.local.example` para `.env.local` e preencha:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   cp .env.local.example .env.local
+   ```
 
-## Deploy on Vercel
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=https://seu-projeto.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=sua-anon-key
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+6. **Instalar e rodar**:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+   Acesse http://localhost:3000 — você será redirecionado para `/login`.
+
+## Estrutura
+
+- `/login` — tela de login (Supabase Auth).
+- `/dashboard` — consolidado mensal por cliente (Delivery Apps + Meta Ads), com seletor de mês.
+- `/delivery-apps` — formulário de lançamento semanal + tabela de lançamentos.
+- `/meta-ads` — formulário de lançamento semanal + tabela de lançamentos.
+
+Todas as rotas exceto `/login` exigem sessão ativa (verificado em `middleware.ts` e no layout de
+`app/(protected)`).
+
+## Deploy
+
+Recomendado: [Vercel](https://vercel.com/new). Configure as mesmas variáveis de ambiente
+(`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`) no painel do projeto na Vercel.
