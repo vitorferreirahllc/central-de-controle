@@ -11,7 +11,7 @@ export default async function DeliveryAppsPage() {
   const { data: entries } = await supabase
     .from("delivery_entries")
     .select(
-      "id, client_id, month_ref, week_number, start_date, end_date, revenue, orders, promo_investment, new_customers, notes, clients(name)",
+      "id, client_id, month_ref, week_number, start_date, end_date, revenue, orders, promo_investment, notes, clients(name)",
     )
     .order("start_date", { ascending: true });
 
@@ -68,16 +68,15 @@ export default async function DeliveryAppsPage() {
               <th className="px-4 py-3">Período</th>
               <th className="px-4 py-3 text-right">Faturamento</th>
               <th className="px-4 py-3 text-right">Pedidos</th>
-              <th className="px-4 py-3 text-right">Ticket Médio</th>
+              <th className="px-4 py-3 text-right">AOV (Ticket Médio)</th>
               <th className="px-4 py-3 text-right">Promoção</th>
-              <th className="px-4 py-3 text-right">Novos Clientes</th>
               <th className="px-4 py-3" />
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {rowsDesc.length === 0 && (
               <tr>
-                <td colSpan={10} className="px-4 py-6 text-center text-muted-foreground">
+                <td colSpan={9} className="px-4 py-6 text-center text-muted-foreground">
                   Nenhum lançamento ainda.
                 </td>
               </tr>
@@ -107,9 +106,6 @@ export default async function DeliveryAppsPage() {
                 </td>
                 <td className="px-4 py-3 text-right text-muted-foreground">
                   {formatCurrency(entry.promo_investment)}
-                </td>
-                <td className="px-4 py-3 text-right text-muted-foreground">
-                  {formatNumber(entry.new_customers)}
                 </td>
                 <td className="px-4 py-3 text-right">
                   <DeleteButton

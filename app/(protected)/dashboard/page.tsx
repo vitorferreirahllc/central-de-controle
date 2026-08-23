@@ -35,7 +35,7 @@ export default async function DashboardPage({
       supabase
         .from("delivery_entries")
         .select(
-          "id, client_id, month_ref, week_number, start_date, end_date, revenue, orders, promo_investment, new_customers, notes, clients(name)",
+          "id, client_id, month_ref, week_number, start_date, end_date, revenue, orders, promo_investment, notes, clients(name)",
         ),
       supabase
         .from("meta_ads_entries")
