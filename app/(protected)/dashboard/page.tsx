@@ -1,4 +1,4 @@
-import { DollarSign, ShoppingBag, Megaphone, TrendingUp } from "lucide-react";
+import { DollarSign, ShoppingBag, Megaphone, TrendingUp, Star } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { CLIENTS } from "@/lib/clients";
 import {
@@ -35,7 +35,7 @@ export default async function DashboardPage({
       supabase
         .from("delivery_entries")
         .select(
-          "id, client_id, month_ref, week_number, start_date, end_date, revenue, orders, promo_investment, notes, clients(name)",
+          "id, client_id, month_ref, week_number, start_date, end_date, revenue, orders, promo_investment, rating, payout, notes, clients(name)",
         ),
       supabase
         .from("meta_ads_entries")
@@ -73,15 +73,31 @@ export default async function DashboardPage({
     const rows = deliveryByMonth.filter((e) => e.clients?.name === name);
     const revenue = rows.reduce((sum, r) => sum + r.revenue, 0);
     const orders = rows.reduce((sum, r) => sum + r.orders, 0);
-    return { name, revenue, orders, ticket: ticketMedio(revenue, orders) };
+    const payout = rows.reduce((sum, r) => sum + (r.payout ?? 0), 0);
+    const ratings = rows
+      .map((r) => r.rating)
+      .filter((v): v is number => v != null);
+    const avgRating =
+      ratings.length > 0
+        ? ratings.reduce((sum, v) => sum + v, 0) / ratings.length
+        : null;
+    return {
+      name,
+      revenue,
+      orders,
+      ticket: ticketMedio(revenue, orders),
+      payout,
+      avgRating,
+    };
   });
 
   const deliveryTotal = deliveryRows.reduce(
     (acc, r) => ({
       revenue: acc.revenue + r.revenue,
       orders: acc.orders + r.orders,
+      payout: acc.payout + r.payout,
     }),
-    { revenue: 0, orders: 0 },
+    { revenue: 0, orders: 0, payout: 0 },
   );
 
   const metaRows = clientList.map((name) => {
@@ -158,6 +174,8 @@ export default async function DashboardPage({
                 <th className="px-4 py-3 text-right">Faturamento ($)</th>
                 <th className="px-4 py-3 text-right">Pedidos (qtd)</th>
                 <th className="px-4 py-3 text-right">Ticket Médio ($)</th>
+                <th className="px-4 py-3 text-right">Repasse Líquido ($)</th>
+                <th className="px-4 py-3 text-right">Avaliação</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -172,6 +190,19 @@ export default async function DashboardPage({
                   </td>
                   <td className="px-4 py-3 text-right text-muted-foreground">
                     {formatCurrency(r.ticket)}
+                  </td>
+                  <td className="px-4 py-3 text-right text-muted-foreground">
+                    {formatCurrency(r.payout)}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    {r.avgRating != null ? (
+                      <span className="inline-flex items-center gap-1 text-muted-foreground">
+                        <Star className="h-3.5 w-3.5 fill-warning text-warning" />
+                        {r.avgRating.toFixed(1)}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -188,6 +219,10 @@ export default async function DashboardPage({
                     ticketMedio(deliveryTotal.revenue, deliveryTotal.orders),
                   )}
                 </td>
+                <td className="px-4 py-3 text-right text-foreground">
+                  {formatCurrency(deliveryTotal.payout)}
+                </td>
+                <td className="px-4 py-3" />
               </tr>
             </tbody>
           </table>

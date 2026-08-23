@@ -13,6 +13,8 @@ export type DeliveryEntry = {
   revenue: number;
   orders: number;
   promo_investment: number;
+  rating: number | null;
+  payout: number | null;
   notes: string | null;
   clients: { name: string } | null;
 };

@@ -1,3 +1,4 @@
+import { Star } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { ticketMedio, formatCurrency, formatNumber } from "@/lib/calc";
 import type { DeliveryEntry } from "@/lib/types";
@@ -11,7 +12,7 @@ export default async function DeliveryAppsPage() {
   const { data: entries } = await supabase
     .from("delivery_entries")
     .select(
-      "id, client_id, month_ref, week_number, start_date, end_date, revenue, orders, promo_investment, notes, clients(name)",
+      "id, client_id, month_ref, week_number, start_date, end_date, revenue, orders, promo_investment, rating, payout, notes, clients(name)",
     )
     .order("start_date", { ascending: true });
 
@@ -70,13 +71,15 @@ export default async function DeliveryAppsPage() {
               <th className="px-4 py-3 text-right">Pedidos</th>
               <th className="px-4 py-3 text-right">AOV (Ticket Médio)</th>
               <th className="px-4 py-3 text-right">Promoção</th>
+              <th className="px-4 py-3 text-right">Repasse Líquido</th>
+              <th className="px-4 py-3 text-right">Avaliação</th>
               <th className="px-4 py-3" />
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {rowsDesc.length === 0 && (
               <tr>
-                <td colSpan={9} className="px-4 py-6 text-center text-muted-foreground">
+                <td colSpan={11} className="px-4 py-6 text-center text-muted-foreground">
                   Nenhum lançamento ainda.
                 </td>
               </tr>
@@ -106,6 +109,19 @@ export default async function DeliveryAppsPage() {
                 </td>
                 <td className="px-4 py-3 text-right text-muted-foreground">
                   {formatCurrency(entry.promo_investment)}
+                </td>
+                <td className="px-4 py-3 text-right text-muted-foreground">
+                  {entry.payout != null ? formatCurrency(entry.payout) : "-"}
+                </td>
+                <td className="px-4 py-3 text-right">
+                  {entry.rating != null ? (
+                    <span className="inline-flex items-center gap-1 text-muted-foreground">
+                      <Star className="h-3.5 w-3.5 fill-warning text-warning" />
+                      {entry.rating.toFixed(1)}
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground">-</span>
+                  )}
                 </td>
                 <td className="px-4 py-3 text-right">
                   <DeleteButton
