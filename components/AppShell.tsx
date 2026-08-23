@@ -13,18 +13,24 @@ export function AppShell({
   children: React.ReactNode;
 }) {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-background">
-      <AppSidebar collapsed={collapsed} onCollapsedChange={setCollapsed} />
+      <AppSidebar
+        collapsed={collapsed}
+        onCollapsedChange={setCollapsed}
+        mobileOpen={mobileOpen}
+        onMobileOpenChange={setMobileOpen}
+      />
       <div
         className={cn(
-          "flex min-h-screen flex-col transition-all duration-300 ease-out",
-          collapsed ? "ml-[72px]" : "ml-[260px]",
+          "flex min-h-screen flex-col transition-[margin] duration-300 ease-out",
+          collapsed ? "md:ml-[72px]" : "md:ml-[260px]",
         )}
       >
-        <AppHeader userEmail={userEmail} />
-        <main className="flex-1 overflow-auto p-6">
+        <AppHeader userEmail={userEmail} onMenuClick={() => setMobileOpen(true)} />
+        <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 sm:p-6">
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
             {children}
           </div>
