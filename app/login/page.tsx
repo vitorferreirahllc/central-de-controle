@@ -44,7 +44,7 @@ export default function LoginPage() {
         <img src="/logo-h.png" alt="Logo H Performance" className="h-14 w-14 object-contain sm:h-16 sm:w-16" />
       </header>
 
-      <main className="relative z-10 flex flex-col items-start justify-start sm:justify-center min-h-[calc(100vh-80px)] px-4 sm:px-6 lg:px-12 max-w-6xl pt-4 sm:-mt-12 lg:-mt-24 pl-6 sm:pl-12 lg:pl-20">
+      <main className="relative z-10 flex flex-col items-start justify-start sm:justify-center min-h-[calc(100vh-80px)] px-4 sm:px-6 lg:px-12 max-w-6xl pt-28 sm:-mt-12 lg:-mt-24 pl-6 sm:pl-12 lg:pl-20">
         <h1 className="text-white text-4xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-8xl font-bold leading-tight mb-4 sm:mb-6 text-balance">
           Conecte clientes.
           Controle resultados.
