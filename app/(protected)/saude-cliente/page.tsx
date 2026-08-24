@@ -1,8 +1,11 @@
-import { HeartPulse, ShieldAlert, ShieldCheck, ShieldQuestion } from "lucide-react";
+import Link from "next/link";
+import { HeartPulse, ShieldAlert, ShieldCheck, ShieldQuestion, Pencil, Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import type { ClientStatus, Risco } from "@/lib/types";
 import { formatProjectWeek } from "@/lib/calc";
 import { KpiCard } from "@/components/KpiCard";
+import { DeleteButton } from "@/components/DeleteButton";
+import { deleteClientStatus } from "../semana-projeto/actions";
 
 const RISCO_STYLES: Record<Risco, { border: string; badge: string; dot: string }> = {
   Baixo: {
@@ -41,10 +44,19 @@ export default async function SaudeClientePage() {
 
   return (
     <div className="space-y-8">
-      <p className="text-sm text-muted-foreground">
-        Saúde dos clientes com base no risco de churn/operação (Baixo,
-        Médio, Alto).
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <p className="text-sm text-muted-foreground">
+          Saúde dos clientes com base no risco de churn/operação (Baixo,
+          Médio, Alto). Clique em "Editar" para atualizar.
+        </p>
+        <Link
+          href="/semana-projeto"
+          className="flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition hover:bg-accent/90"
+        >
+          <Plus className="h-4 w-4" />
+          Adicionar cliente
+        </Link>
+      </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <KpiCard label="Saudáveis (Baixo risco)" value={String(counts.Baixo)} icon={ShieldCheck} />
@@ -92,6 +104,17 @@ export default async function SaudeClientePage() {
               <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
                 <span>{c.responsavel ?? "Sem responsável"}</span>
                 {c.data_entrada && <span>Desde {c.data_entrada}</span>}
+              </div>
+
+              <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
+                <Link
+                  href={`/semana-projeto/${c.id}/editar`}
+                  className="flex items-center gap-1.5 text-xs font-medium text-accent hover:text-accent/80"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                  Editar
+                </Link>
+                <DeleteButton onDelete={deleteClientStatus.bind(null, c.id)} />
               </div>
             </div>
           );
