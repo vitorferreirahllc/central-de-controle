@@ -1,6 +1,6 @@
 import { DollarSign, ShoppingBag, Megaphone, TrendingUp, Star } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { CLIENTS } from "@/lib/clients";
+import { DELIVERY_CLIENTS, META_ADS_CLIENTS } from "@/lib/clients";
 import {
   ticketMedio,
   roas,
@@ -29,9 +29,8 @@ export default async function DashboardPage({
   const { month } = await searchParams;
   const supabase = await createClient();
 
-  const [{ data: clients }, { data: deliveryData }, { data: metaData }] =
+  const [{ data: deliveryData }, { data: metaData }] =
     await Promise.all([
-      supabase.from("clients").select("id, name").order("name"),
       supabase
         .from("delivery_entries")
         .select(
@@ -46,10 +45,6 @@ export default async function DashboardPage({
 
   const deliveryEntries = (deliveryData ?? []) as unknown as DeliveryEntry[];
   const metaEntries = (metaData ?? []) as unknown as MetaAdsEntry[];
-
-  const clientList = clients?.length
-    ? clients.map((c) => c.name)
-    : (CLIENTS as unknown as string[]);
 
   const months = Array.from(
     new Set([
@@ -69,7 +64,7 @@ export default async function DashboardPage({
   );
   const metaByMonth = metaEntries.filter((e) => e.month_ref === selectedMonth);
 
-  const deliveryRows = clientList.map((name) => {
+  const deliveryRows = DELIVERY_CLIENTS.map((name) => {
     const rows = deliveryByMonth.filter((e) => e.clients?.name === name);
     const revenue = rows.reduce((sum, r) => sum + r.revenue, 0);
     const orders = rows.reduce((sum, r) => sum + r.orders, 0);
@@ -100,7 +95,7 @@ export default async function DashboardPage({
     { revenue: 0, orders: 0, payout: 0 },
   );
 
-  const metaRows = clientList.map((name) => {
+  const metaRows = META_ADS_CLIENTS.map((name) => {
     const rows = metaByMonth.filter((e) => e.clients?.name === name);
     const invested = rows.reduce((sum, r) => sum + r.invested, 0);
     const revenueGenerated = rows.reduce(
