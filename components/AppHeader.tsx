@@ -7,8 +7,8 @@ const TITLES: Record<string, string> = {
   "/dashboard": "Dashboard",
   "/delivery-apps": "Delivery Apps",
   "/meta-ads": "Meta Ads",
-  "/semana-projeto": "Semana do Projeto",
-  "/saude-cliente": "Saúde do Cliente",
+  "/controle-operacoes": "Controle de Operações",
+  "/operation-health-score": "Operation Health Score",
 };
 
 export function AppHeader({

@@ -5,7 +5,7 @@ import type { ClientStatus, Risco } from "@/lib/types";
 import { formatProjectWeek } from "@/lib/calc";
 import { KpiCard } from "@/components/KpiCard";
 import { DeleteButton } from "@/components/DeleteButton";
-import { deleteClientStatus } from "../semana-projeto/actions";
+import { deleteClientStatus } from "../controle-operacoes/actions";
 
 const RISCO_STYLES: Record<Risco, { border: string; badge: string; dot: string }> = {
   Baixo: {
@@ -50,7 +50,7 @@ export default async function SaudeClientePage() {
           Médio, Alto). Clique em "Editar" para atualizar.
         </p>
         <Link
-          href="/semana-projeto"
+          href="/controle-operacoes"
           className="flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition hover:bg-accent/90"
         >
           <Plus className="h-4 w-4" />
@@ -108,7 +108,7 @@ export default async function SaudeClientePage() {
 
               <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
                 <Link
-                  href={`/semana-projeto/${c.id}/editar`}
+                  href={`/controle-operacoes/${c.id}/editar`}
                   className="flex items-center gap-1.5 text-xs font-medium text-accent hover:text-accent/80"
                 >
                   <Pencil className="h-3.5 w-3.5" />

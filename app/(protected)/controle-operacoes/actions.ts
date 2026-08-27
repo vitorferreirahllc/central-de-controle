@@ -20,8 +20,8 @@ export async function createClientStatus(formData: FormData) {
     throw new Error(error.message);
   }
 
-  revalidatePath("/semana-projeto");
-  revalidatePath("/saude-cliente");
+  revalidatePath("/controle-operacoes");
+  revalidatePath("/operation-health-score");
 }
 
 export async function updateClientStatus(id: number, formData: FormData) {
@@ -44,9 +44,9 @@ export async function updateClientStatus(id: number, formData: FormData) {
     throw new Error(error.message);
   }
 
-  revalidatePath("/semana-projeto");
-  revalidatePath("/saude-cliente");
-  redirect("/semana-projeto");
+  revalidatePath("/controle-operacoes");
+  revalidatePath("/operation-health-score");
+  redirect("/controle-operacoes");
 }
 
 export async function deleteClientStatus(id: number) {
@@ -61,6 +61,6 @@ export async function deleteClientStatus(id: number) {
     throw new Error(error.message);
   }
 
-  revalidatePath("/semana-projeto");
-  revalidatePath("/saude-cliente");
+  revalidatePath("/controle-operacoes");
+  revalidatePath("/operation-health-score");
 }

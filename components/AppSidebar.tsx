@@ -22,8 +22,8 @@ const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/delivery-apps", label: "Delivery Apps", icon: Truck },
   { href: "/meta-ads", label: "Meta Ads", icon: Megaphone },
-  { href: "/semana-projeto", label: "Semana do Projeto", icon: CalendarClock },
-  { href: "/saude-cliente", label: "Saúde do Cliente", icon: HeartPulse },
+  { href: "/controle-operacoes", label: "Controle de Operações", icon: CalendarClock },
+  { href: "/operation-health-score", label: "Operation Health Score", icon: HeartPulse },
 ];
 
 export function AppSidebar({

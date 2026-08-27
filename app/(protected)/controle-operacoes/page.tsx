@@ -131,7 +131,7 @@ export default async function SemanaProjetoPage() {
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-3">
                     <Link
-                      href={`/semana-projeto/${c.id}/editar`}
+                      href={`/controle-operacoes/${c.id}/editar`}
                       className="text-xs font-medium text-accent hover:text-accent/80"
                     >
                       Editar

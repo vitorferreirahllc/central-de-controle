@@ -112,7 +112,7 @@ export default async function EditarClientStatusPage({
             Salvar alterações
           </button>
           <a
-            href="/semana-projeto"
+            href="/controle-operacoes"
             className="rounded-lg border border-border px-5 py-2.5 text-sm font-medium text-muted-foreground transition hover:text-foreground"
           >
             Cancelar
