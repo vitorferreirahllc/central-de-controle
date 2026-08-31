@@ -1,12 +1,19 @@
 import { Star } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { ticketMedio, formatCurrency, formatNumber } from "@/lib/calc";
+import { DELIVERY_CLIENTS } from "@/lib/clients";
 import type { DeliveryEntry } from "@/lib/types";
 import { deleteDeliveryEntry } from "./actions";
 import { DeleteButton } from "@/components/DeleteButton";
 import { GrowthChart } from "@/components/GrowthChart";
+import { ResultsFilter } from "@/components/ResultsFilter";
 
-export default async function DeliveryAppsPage() {
+export default async function DeliveryAppsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ client?: string; week?: string }>;
+}) {
+  const { client, week } = await searchParams;
   const supabase = await createClient();
 
   const { data: entries } = await supabase
@@ -16,7 +23,30 @@ export default async function DeliveryAppsPage() {
     )
     .order("start_date", { ascending: true });
 
-  const rows = (entries ?? []) as unknown as DeliveryEntry[];
+  const allRows = (entries ?? []) as unknown as DeliveryEntry[];
+
+  const weekOptions = Array.from(
+    new Map(
+      allRows.map((e) => [
+        e.start_date,
+        {
+          value: e.start_date,
+          label: `${e.start_date} — ${e.end_date}`,
+        },
+      ]),
+    ).values(),
+  ).sort((a, b) => b.value.localeCompare(a.value));
+
+  const selectedClient = client && client !== "Todos" ? client : "Todos";
+  const selectedWeek = week && week !== "Todas" ? week : "Todas";
+
+  const rows = allRows.filter((e) => {
+    const matchesClient =
+      selectedClient === "Todos" || e.clients?.name === selectedClient;
+    const matchesWeek =
+      selectedWeek === "Todas" || e.start_date === selectedWeek;
+    return matchesClient && matchesWeek;
+  });
 
   const byWeek = new Map<string, { revenue: number; orders: number }>();
   for (const entry of rows) {
@@ -41,14 +71,23 @@ export default async function DeliveryAppsPage() {
 
   return (
     <div className="space-y-8">
-      <p className="text-sm text-muted-foreground">
-        Resultado semanal de cada cliente (DoorDash, Uber Eats, etc.
-        consolidados).
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <p className="text-sm text-muted-foreground">
+          Resultado semanal de cada cliente (DoorDash, Uber Eats, etc.
+          consolidados).
+        </p>
+        <ResultsFilter
+          basePath="/delivery-apps"
+          clients={DELIVERY_CLIENTS}
+          weeks={weekOptions}
+          selectedClient={selectedClient}
+          selectedWeek={selectedWeek}
+        />
+      </div>
 
       <GrowthChart
         title="Crescimento — Faturamento"
-        subtitle="Faturamento total (todos os clientes) por semana"
+        subtitle="Faturamento total (dos clientes filtrados) por semana"
         data={chartData}
         series={[
           {
@@ -80,7 +119,7 @@ export default async function DeliveryAppsPage() {
             {rowsDesc.length === 0 && (
               <tr>
                 <td colSpan={11} className="px-4 py-6 text-center text-muted-foreground">
-                  Nenhum lançamento ainda.
+                  Nenhum lançamento para esse filtro.
                 </td>
               </tr>
             )}

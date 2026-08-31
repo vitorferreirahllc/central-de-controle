@@ -1,9 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { custoPorResultado, roas, statusRoas, formatCurrency, formatNumber } from "@/lib/calc";
+import { META_ADS_CLIENTS } from "@/lib/clients";
 import type { MetaAdsEntry } from "@/lib/types";
 import { deleteMetaAdsEntry } from "./actions";
 import { DeleteButton } from "@/components/DeleteButton";
 import { GrowthChart } from "@/components/GrowthChart";
+import { ResultsFilter } from "@/components/ResultsFilter";
 
 function statusColor(status: string) {
   if (status === "Excelente") return "text-success";
@@ -13,7 +15,12 @@ function statusColor(status: string) {
   return "text-muted-foreground";
 }
 
-export default async function MetaAdsPage() {
+export default async function MetaAdsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ client?: string; week?: string }>;
+}) {
+  const { client, week } = await searchParams;
   const supabase = await createClient();
 
   const { data: entries } = await supabase
@@ -23,7 +30,30 @@ export default async function MetaAdsPage() {
     )
     .order("start_date", { ascending: true });
 
-  const rows = (entries ?? []) as unknown as MetaAdsEntry[];
+  const allRows = (entries ?? []) as unknown as MetaAdsEntry[];
+
+  const weekOptions = Array.from(
+    new Map(
+      allRows.map((e) => [
+        e.start_date,
+        {
+          value: e.start_date,
+          label: `${e.start_date} — ${e.end_date}`,
+        },
+      ]),
+    ).values(),
+  ).sort((a, b) => b.value.localeCompare(a.value));
+
+  const selectedClient = client && client !== "Todos" ? client : "Todos";
+  const selectedWeek = week && week !== "Todas" ? week : "Todas";
+
+  const rows = allRows.filter((e) => {
+    const matchesClient =
+      selectedClient === "Todos" || e.clients?.name === selectedClient;
+    const matchesWeek =
+      selectedWeek === "Todas" || e.start_date === selectedWeek;
+    return matchesClient && matchesWeek;
+  });
 
   const byWeek = new Map<string, { invested: number; revenueGenerated: number }>();
   for (const entry of rows) {
@@ -48,13 +78,22 @@ export default async function MetaAdsPage() {
 
   return (
     <div className="space-y-8">
-      <p className="text-sm text-muted-foreground">
-        Resultado semanal de cada campanha por cliente.
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <p className="text-sm text-muted-foreground">
+          Resultado semanal de cada campanha por cliente.
+        </p>
+        <ResultsFilter
+          basePath="/meta-ads"
+          clients={META_ADS_CLIENTS}
+          weeks={weekOptions}
+          selectedClient={selectedClient}
+          selectedWeek={selectedWeek}
+        />
+      </div>
 
       <GrowthChart
         title="Crescimento — Investido x Receita Gerada"
-        subtitle="Totais (todos os clientes) por semana"
+        subtitle="Totais (dos clientes filtrados) por semana"
         data={chartData}
         series={[
           {
@@ -92,7 +131,7 @@ export default async function MetaAdsPage() {
             {rowsDesc.length === 0 && (
               <tr>
                 <td colSpan={12} className="px-4 py-6 text-center text-muted-foreground">
-                  Nenhum lançamento ainda.
+                  Nenhum lançamento para esse filtro.
                 </td>
               </tr>
             )}
