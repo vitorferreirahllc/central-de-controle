@@ -8,6 +8,7 @@ import {
   statusRoas,
   formatCurrency,
   formatNumber,
+  sortMonthRefs,
 } from "@/lib/calc";
 import type { DeliveryEntry, MetaAdsEntry } from "@/lib/types";
 import { MonthSelect } from "@/components/MonthSelect";
@@ -46,12 +47,14 @@ export default async function DashboardPage({
   const deliveryEntries = (deliveryData ?? []) as unknown as DeliveryEntry[];
   const metaEntries = (metaData ?? []) as unknown as MetaAdsEntry[];
 
-  const months = Array.from(
-    new Set([
-      ...deliveryEntries.map((e) => e.month_ref),
-      ...metaEntries.map((e) => e.month_ref),
-    ]),
-  ).sort();
+  const months = sortMonthRefs(
+    Array.from(
+      new Set([
+        ...deliveryEntries.map((e) => e.month_ref),
+        ...metaEntries.map((e) => e.month_ref),
+      ]),
+    ),
+  );
 
   const selectedMonth = month && months.includes(month)
     ? month

@@ -1,15 +1,10 @@
 import type { Metadata } from "next";
-import { DM_Sans, JetBrains_Mono } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
-  subsets: ["latin"],
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
 });
 
@@ -22,7 +17,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-BR"
-      className={`${dmSans.variable} ${jetbrainsMono.variable} h-full antialiased dark`}
+      className={`${dmSans.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col bg-background">
         <Script id="theme-init" strategy="beforeInteractive">

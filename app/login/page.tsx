@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { ArrowRight, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { NexoBackground } from "@/components/NexoBackground";
@@ -41,7 +42,14 @@ export default function LoginPage() {
       <NexoBackground />
 
       <header className="absolute left-5 top-5 z-20 sm:left-8 sm:top-8 lg:left-12 lg:top-10">
-        <img src="/logo-h.png" alt="Logo H Performance" className="h-14 w-14 object-contain sm:h-16 sm:w-16" />
+        <Image
+          src="/logo-h.png"
+          alt="Logo H Performance"
+          width={64}
+          height={64}
+          priority
+          className="h-14 w-14 object-contain sm:h-16 sm:w-16"
+        />
       </header>
 
       <main className="relative z-10 flex flex-col items-start justify-start sm:justify-center min-h-[calc(100vh-80px)] px-4 sm:px-6 lg:px-12 max-w-6xl pt-28 sm:-mt-12 lg:-mt-24 pl-6 sm:pl-12 lg:pl-20">
@@ -81,7 +89,13 @@ export default function LoginPage() {
           <X className="h-5 w-5" />
         </button>
         <div className="mb-8">
-          <img src="/logo-h.png" alt="Logo H Performance" className="mb-6 h-12 w-12 object-contain" />
+          <Image
+            src="/logo-h.png"
+            alt="Logo H Performance"
+            width={48}
+            height={48}
+            className="mb-6 h-12 w-12 object-contain"
+          />
           <h2 className="text-3xl font-semibold text-white">Acessar Central de Resultados</h2>
         </div>
         <form className="flex flex-col gap-5" onSubmit={handleSubmit}>

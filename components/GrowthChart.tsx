@@ -14,7 +14,6 @@ type Series = {
   key: string;
   label: string;
   color: string;
-  formatter?: (value: number) => string;
 };
 
 export function GrowthChart({

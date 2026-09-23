@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic";
 import { Star } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { ticketMedio, formatCurrency, formatNumber } from "@/lib/calc";
@@ -5,8 +6,16 @@ import { DELIVERY_CLIENTS } from "@/lib/clients";
 import type { DeliveryEntry } from "@/lib/types";
 import { deleteDeliveryEntry } from "./actions";
 import { DeleteButton } from "@/components/DeleteButton";
-import { GrowthChart } from "@/components/GrowthChart";
 import { ResultsFilter } from "@/components/ResultsFilter";
+
+const GrowthChart = dynamic(
+  () => import("@/components/GrowthChart").then((m) => m.GrowthChart),
+  {
+    loading: () => (
+      <div className="h-[380px] animate-pulse rounded-xl border border-border bg-card" />
+    ),
+  },
+);
 
 export default async function DeliveryAppsPage({
   searchParams,

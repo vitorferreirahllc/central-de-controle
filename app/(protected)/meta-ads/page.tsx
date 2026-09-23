@@ -1,11 +1,20 @@
+import dynamic from "next/dynamic";
 import { createClient } from "@/lib/supabase/server";
 import { custoPorResultado, roas, statusRoas, formatCurrency, formatNumber } from "@/lib/calc";
 import { META_ADS_CLIENTS } from "@/lib/clients";
 import type { MetaAdsEntry } from "@/lib/types";
 import { deleteMetaAdsEntry } from "./actions";
 import { DeleteButton } from "@/components/DeleteButton";
-import { GrowthChart } from "@/components/GrowthChart";
 import { ResultsFilter } from "@/components/ResultsFilter";
+
+const GrowthChart = dynamic(
+  () => import("@/components/GrowthChart").then((m) => m.GrowthChart),
+  {
+    loading: () => (
+      <div className="h-[380px] animate-pulse rounded-xl border border-border bg-card" />
+    ),
+  },
+);
 
 function statusColor(status: string) {
   if (status === "Excelente") return "text-success";

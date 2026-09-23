@@ -1,8 +1,3 @@
-export type Client = {
-  id: number;
-  name: string;
-};
-
 export type DeliveryEntry = {
   id: number;
   client_id: number;
@@ -40,7 +35,6 @@ export type ClientStatus = {
   id: number;
   client_name: string;
   data_entrada: string | null;
-  semana_projeto: string | null;
   responsavel: string | null;
   status: Status;
   proxima_entrega: string | null;

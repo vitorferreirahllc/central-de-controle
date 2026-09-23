@@ -33,7 +33,7 @@ export function ThemeToggle({ collapsed }: { collapsed: boolean }) {
       <span
         className={cn(
           "whitespace-nowrap transition-all duration-300",
-          collapsed ? "w-0 overflow-hidden opacity-0" : "opacity-100",
+          collapsed ? "md:w-0 md:overflow-hidden md:opacity-0" : "opacity-100",
         )}
       >
         {light ? "Modo escuro" : "Modo claro"}

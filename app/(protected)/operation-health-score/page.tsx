@@ -7,21 +7,18 @@ import { KpiCard } from "@/components/KpiCard";
 import { DeleteButton } from "@/components/DeleteButton";
 import { deleteClientStatus } from "../controle-operacoes/actions";
 
-const RISCO_STYLES: Record<Risco, { border: string; badge: string; dot: string }> = {
+const RISCO_STYLES: Record<Risco, { border: string; badge: string }> = {
   Baixo: {
     border: "border-success/30 hover:border-success/60",
     badge: "bg-success/10 text-success",
-    dot: "bg-success",
   },
   Médio: {
     border: "border-warning/30 hover:border-warning/60",
     badge: "bg-warning/10 text-warning",
-    dot: "bg-warning",
   },
   Alto: {
     border: "border-destructive/30 hover:border-destructive/60",
     badge: "bg-destructive/10 text-destructive",
-    dot: "bg-destructive",
   },
 };
 
@@ -47,7 +44,7 @@ export default async function SaudeClientePage() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <p className="text-sm text-muted-foreground">
           Saúde dos clientes com base no risco de churn/operação (Baixo,
-          Médio, Alto). Clique em "Editar" para atualizar.
+          Médio, Alto). Clique em &quot;Editar&quot; para atualizar.
         </p>
         <Link
           href="/controle-operacoes"
