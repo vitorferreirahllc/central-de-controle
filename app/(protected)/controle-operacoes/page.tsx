@@ -4,6 +4,7 @@ import type { ClientStatus } from "@/lib/types";
 import { formatProjectWeek } from "@/lib/calc";
 import { createClientStatus, deleteClientStatus } from "./actions";
 import { DeleteButton } from "@/components/DeleteButton";
+import { CollapsibleTable } from "@/components/CollapsibleTable";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-secondary px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring";
@@ -89,7 +90,7 @@ export default async function SemanaProjetoPage() {
         </div>
       </form>
 
-      <div className="overflow-x-auto rounded-xl border border-border bg-card">
+      <CollapsibleTable title="Clientes">
         <table className="w-full text-sm">
           <thead className="bg-secondary text-left text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
@@ -145,7 +146,7 @@ export default async function SemanaProjetoPage() {
             ))}
           </tbody>
         </table>
-      </div>
+      </CollapsibleTable>
     </div>
   );
 }
