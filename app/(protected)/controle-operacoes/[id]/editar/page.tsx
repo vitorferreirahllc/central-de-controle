@@ -95,6 +95,20 @@ export default async function EditarClientStatusPage({
           </select>
         </div>
 
+        <div>
+          <label className={labelClass}>Produto</label>
+          <select
+            name="produto"
+            defaultValue={c.produto ?? ""}
+            className={inputClass}
+          >
+            <option value="">Sem produto</option>
+            <option value="Food Growth">Food Growth</option>
+            <option value="Scale">Scale</option>
+            <option value="Spot">Spot</option>
+          </select>
+        </div>
+
         <div className="sm:col-span-2">
           <label className={labelClass}>Próxima Entrega</label>
           <input

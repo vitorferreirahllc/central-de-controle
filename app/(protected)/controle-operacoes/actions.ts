@@ -14,6 +14,7 @@ export async function createClientStatus(formData: FormData) {
     status: String(formData.get("status")),
     proxima_entrega: String(formData.get("proxima_entrega") || "") || null,
     risco: String(formData.get("risco")),
+    produto: String(formData.get("produto") || "") || null,
   });
 
   if (error) {
@@ -36,6 +37,7 @@ export async function updateClientStatus(id: number, formData: FormData) {
       status: String(formData.get("status")),
       proxima_entrega: String(formData.get("proxima_entrega") || "") || null,
       risco: String(formData.get("risco")),
+      produto: String(formData.get("produto") || "") || null,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id);

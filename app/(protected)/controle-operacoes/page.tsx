@@ -75,6 +75,16 @@ export default async function SemanaProjetoPage() {
           </select>
         </div>
 
+        <div>
+          <label className={labelClass}>Produto</label>
+          <select name="produto" defaultValue="" className={inputClass}>
+            <option value="">Sem produto</option>
+            <option value="Food Growth">Food Growth</option>
+            <option value="Scale">Scale</option>
+            <option value="Spot">Spot</option>
+          </select>
+        </div>
+
         <div className="sm:col-span-2 lg:col-span-2">
           <label className={labelClass}>Próxima Entrega</label>
           <input name="proxima_entrega" className={inputClass} />
@@ -100,13 +110,14 @@ export default async function SemanaProjetoPage() {
               <th className="px-4 py-3">Responsável</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Risco</th>
+              <th className="px-4 py-3">Produto</th>
               <th className="px-4 py-3" />
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {rows.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">
+                <td colSpan={8} className="px-4 py-6 text-center text-muted-foreground">
                   Nenhum cliente cadastrado ainda.
                 </td>
               </tr>
@@ -128,6 +139,9 @@ export default async function SemanaProjetoPage() {
                 </td>
                 <td className={`px-4 py-3 font-medium ${riscoColor(c.risco)}`}>
                   {c.risco}
+                </td>
+                <td className="px-4 py-3 text-muted-foreground">
+                  {c.produto ?? "-"}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-3">
