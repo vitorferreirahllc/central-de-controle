@@ -85,3 +85,42 @@ export function sortMonthRefs(monthRefs: string[]): string[] {
     monthRefSortKey(a).localeCompare(monthRefSortKey(b)),
   );
 }
+
+/**
+ * Variação percentual entre dois valores. Retorna null quando não há base de
+ * comparação válida (anterior nulo ou zero) — nunca "finge" 0% nesse caso.
+ */
+export function percentDelta(
+  atual: number,
+  anterior: number | null | undefined,
+): number | null {
+  if (anterior == null || anterior === 0) return null;
+  return ((atual - anterior) / anterior) * 100;
+}
+
+/** Repasse líquido como % do faturamento. Null se não houver faturamento. */
+export function repassePercent(
+  payout: number | null | undefined,
+  revenue: number,
+): number | null {
+  if (!revenue || payout == null) return null;
+  return (payout / revenue) * 100;
+}
+
+/** Investimento em promoção como % do faturamento. Null se não houver faturamento. */
+export function promoPercent(
+  promoInvestment: number,
+  revenue: number,
+): number | null {
+  if (!revenue) return null;
+  return (promoInvestment / revenue) * 100;
+}
+
+/** Diferença simples em pontos percentuais entre dois percentuais já calculados. */
+export function pointsDelta(
+  atualPct: number | null,
+  anteriorPct: number | null,
+): number | null {
+  if (atualPct == null || anteriorPct == null) return null;
+  return atualPct - anteriorPct;
+}
