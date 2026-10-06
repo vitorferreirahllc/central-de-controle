@@ -7,6 +7,7 @@ export type OperationTimezone = {
   country: "Estados Unidos" | "Canadá";
   flag: string;
   timezone: string;
+  units?: { label: string; city: string; region: string }[];
 };
 
 export const OPERATIONS_TIMEZONES: OperationTimezone[] = [
@@ -14,8 +15,7 @@ export const OPERATIONS_TIMEZONES: OperationTimezone[] = [
   { name: "Sagrado Cafe", city: "Miami", region: "FL", country: "Estados Unidos", flag: "🇺🇸", timezone: "America/New_York" },
   { name: "Summer House Cafe", city: "Hyannis", region: "MA", country: "Estados Unidos", flag: "🇺🇸", timezone: "America/New_York" },
   { name: "Temak House Orlando", city: "Orlando", region: "FL", country: "Estados Unidos", flag: "🇺🇸", timezone: "America/New_York" },
-  { name: "Touken Sushi – Hunters Creek", city: "Orlando", region: "FL", country: "Estados Unidos", flag: "🇺🇸", timezone: "America/New_York" },
-  { name: "Touken Sushi – Ocoee", city: "Ocoee", region: "FL", country: "Estados Unidos", flag: "🇺🇸", timezone: "America/New_York" },
+  { name: "Touken Sushi", city: "Orlando", region: "FL", country: "Estados Unidos", flag: "🇺🇸", timezone: "America/New_York", units: [{ label: "Hunters Creek", city: "Orlando", region: "FL" }, { label: "Ocoee", city: "Ocoee", region: "FL" }] },
   { name: "Zaatar Grill & Pizza", city: "Winter Garden", region: "FL", country: "Estados Unidos", flag: "🇺🇸", timezone: "America/New_York" },
   { name: "From Brazil Restaurant", city: "Peabody", region: "MA", country: "Estados Unidos", flag: "🇺🇸", timezone: "America/New_York" },
   { name: "That's Bananas", city: "Nepean", region: "ON", country: "Canadá", flag: "🇨🇦", timezone: "America/Toronto" },

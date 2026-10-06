@@ -20,6 +20,7 @@ export function OperationsTimezones() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string>("Todos");
   const [sort, setSort] = useState<SortMode>("none");
+  const [unitByOp, setUnitByOp] = useState<Record<string, number>>({});
 
   useEffect(() => {
     setNow(new Date());
@@ -55,13 +56,13 @@ export function OperationsTimezones() {
     for (const op of operations) {
       const existing = map.get(op.utcLabel);
       if (existing) {
-        existing.count += 1;
+        existing.count += op.units?.length ?? 1;
       } else {
         map.set(op.utcLabel, {
           utcLabel: op.utcLabel,
           diff: op.diff,
           timezone: op.timezone,
-          count: 1,
+          count: op.units?.length ?? 1,
         });
       }
     }
@@ -80,7 +81,12 @@ export function OperationsTimezones() {
       list = list.filter(
         (op) =>
           op.name.toLowerCase().includes(q) ||
-          op.city.toLowerCase().includes(q),
+          op.city.toLowerCase().includes(q) ||
+          (op.units ?? []).some(
+            (u) =>
+              u.label.toLowerCase().includes(q) ||
+              u.city.toLowerCase().includes(q),
+          ),
       );
     }
 
@@ -219,9 +225,35 @@ export function OperationsTimezones() {
             <div className="flex items-start justify-between gap-2">
               <div>
                 <h3 className="font-semibold text-foreground">{op.name}</h3>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  {op.flag} {op.city}, {op.region}
-                </p>
+                {op.units ? (
+                  <div className="mt-1.5">
+                    <select
+                      value={unitByOp[op.name] ?? 0}
+                      onChange={(e) =>
+                        setUnitByOp((prev) => ({
+                          ...prev,
+                          [op.name]: Number(e.target.value),
+                        }))
+                      }
+                      aria-label={`Unidade de ${op.name}`}
+                      className="rounded-md border border-border bg-secondary px-2 py-1 text-xs text-foreground outline-none focus:ring-2 focus:ring-ring"
+                    >
+                      {op.units.map((u, i) => (
+                        <option key={u.label} value={i}>
+                          {u.label}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {op.flag} {op.units[unitByOp[op.name] ?? 0].city},{" "}
+                      {op.units[unitByOp[op.name] ?? 0].region}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {op.flag} {op.city}, {op.region}
+                  </p>
+                )}
               </div>
               <span className="shrink-0 rounded-full bg-secondary px-2.5 py-1 text-[11px] font-medium text-muted-foreground">
                 {op.utcLabel}
