@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { ClientStatus } from "@/lib/types";
 import { formatProjectWeek } from "@/lib/calc";
 import { updateClientStatus } from "../../actions";
+import { effectiveStatus, formatDateBR, todayInBrasilia } from "@/lib/contracts";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-secondary px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring";
@@ -27,6 +28,13 @@ export default async function EditarClientStatusPage({
   }
 
   const c = data as ClientStatus;
+  const { data: contract } = await supabase
+    .from("client_contracts")
+    .select("data_fim")
+    .eq("client_status_id", c.id)
+    .maybeSingle();
+  const status = effectiveStatus(c.status, contract?.data_fim, todayInBrasilia());
+  const expired = !!contract && contract.data_fim < todayInBrasilia();
   const updateWithId = updateClientStatus.bind(null, c.id);
 
   return (
@@ -76,7 +84,8 @@ export default async function EditarClientStatusPage({
           <label className={labelClass}>Status</label>
           <select
             name="status"
-            defaultValue={c.status}
+            defaultValue={status}
+            disabled={expired}
             className={inputClass}
           >
             <option value="Onboarding">Onboarding</option>
@@ -84,6 +93,21 @@ export default async function EditarClientStatusPage({
             <option value="Pausado">Pausado</option>
             <option value="Encerrado">Encerrado</option>
           </select>
+          {expired && (
+            <>
+              <input type="hidden" name="status" value="Encerrado" />
+              <p className="mt-1 text-[11px] text-muted-foreground">
+                Contrato encerrado em {formatDateBR(contract!.data_fim)} —
+                status fixo em Encerrado.
+              </p>
+            </>
+          )}
+          {!expired && contract && (
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Contrato vigente até {formatDateBR(contract.data_fim)}.
+              Marcar como Encerrado encerra o contrato antecipadamente.
+            </p>
+          )}
         </div>
 
         <div>

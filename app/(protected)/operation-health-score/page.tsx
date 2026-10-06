@@ -3,6 +3,7 @@ import { HeartPulse, ShieldAlert, ShieldCheck, ShieldQuestion, Pencil, Plus } fr
 import { createClient } from "@/lib/supabase/server";
 import type { ClientStatus, Risco } from "@/lib/types";
 import { formatProjectWeek } from "@/lib/calc";
+import { effectiveStatus, todayInBrasilia } from "@/lib/contracts";
 import { KpiCard } from "@/components/KpiCard";
 import { DeleteButton } from "@/components/DeleteButton";
 import { CollapsibleTable } from "@/components/CollapsibleTable";
@@ -25,7 +26,7 @@ const RISCO_STYLES: Record<Risco, { border: string; badge: string }> = {
 
 const PRODUTO_ORDER = ["Food Growth", "Scale", "Spot", "Sem produto"] as const;
 
-function ClientCard({ c }: { c: ClientStatus }) {
+function ClientCard({ c, status }: { c: ClientStatus; status: string }) {
   const style = RISCO_STYLES[c.risco];
   return (
     <div
@@ -35,7 +36,7 @@ function ClientCard({ c }: { c: ClientStatus }) {
         <div>
           <h3 className="font-semibold text-foreground">{c.client_name}</h3>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            {c.status} · {formatProjectWeek(c.data_entrada)}
+            {status} · {formatProjectWeek(c.data_entrada)}
           </p>
         </div>
         <span
@@ -82,6 +83,14 @@ export default async function SaudeClientePage() {
     .order("client_name");
 
   const rows = (data ?? []) as ClientStatus[];
+
+  const { data: contractsData } = await supabase
+    .from("client_contracts")
+    .select("client_status_id, data_fim");
+  const endByClient = new Map(
+    (contractsData ?? []).map((c) => [c.client_status_id as number, c.data_fim as string]),
+  );
+  const today = todayInBrasilia();
 
   const counts = {
     Baixo: rows.filter((r) => r.risco === "Baixo").length,
@@ -138,7 +147,11 @@ export default async function SaudeClientePage() {
           >
             <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3">
               {items.map((c) => (
-                <ClientCard key={c.id} c={c} />
+                <ClientCard
+                  key={c.id}
+                  c={c}
+                  status={effectiveStatus(c.status, endByClient.get(c.id), today)}
+                />
               ))}
             </div>
           </CollapsibleTable>

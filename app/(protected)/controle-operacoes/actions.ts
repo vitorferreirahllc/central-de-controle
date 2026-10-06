@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { effectiveStatus, todayInBrasilia } from "@/lib/contracts";
 
 export async function createClientStatus(formData: FormData) {
   const supabase = await createClient();
@@ -28,13 +29,24 @@ export async function createClientStatus(formData: FormData) {
 export async function updateClientStatus(id: number, formData: FormData) {
   const supabase = await createClient();
 
+  const { data: contract } = await supabase
+    .from("client_contracts")
+    .select("data_fim")
+    .eq("client_status_id", id)
+    .maybeSingle();
+  const status = effectiveStatus(
+    String(formData.get("status")),
+    contract?.data_fim,
+    todayInBrasilia(),
+  );
+
   const { error } = await supabase
     .from("client_status")
     .update({
       client_name: String(formData.get("client_name")),
       data_entrada: String(formData.get("data_entrada") || "") || null,
       responsavel: String(formData.get("responsavel") || "") || null,
-      status: String(formData.get("status")),
+      status,
       proxima_entrega: String(formData.get("proxima_entrega") || "") || null,
       risco: String(formData.get("risco")),
       produto: String(formData.get("produto") || "") || null,

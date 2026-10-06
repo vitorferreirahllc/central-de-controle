@@ -39,7 +39,7 @@ export type ClientContract = {
   data_inicio: string;
   data_fim: string;
   resumo: string | null;
-  client_status: { client_name: string } | null;
+  client_status: { client_name: string; status: Status } | null;
 };
 
 export type ClientStatus = {

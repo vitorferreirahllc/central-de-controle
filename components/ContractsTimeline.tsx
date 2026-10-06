@@ -13,7 +13,7 @@ const STATE_STYLES: Record<
 > = {
   ativo: {
     badge: "bg-success/10 text-success",
-    badgeLabel: "Em andamento",
+    badgeLabel: "Vigente",
     bar: "bg-accent",
     days: "text-foreground",
   },
@@ -52,7 +52,13 @@ export function ContractsTimeline({
       inicio: c.data_inicio,
       fim: c.data_fim,
       resumo: c.resumo,
-      ...contractProgress(c.data_inicio, c.data_fim, today),
+      opStatus: c.client_status?.status ?? null,
+      ...contractProgress(
+        c.data_inicio,
+        c.data_fim,
+        today,
+        c.client_status?.status === "Encerrado",
+      ),
     }))
     .sort((a, b) => {
       const aEnded = a.state === "encerrado";
@@ -80,7 +86,7 @@ export function ContractsTimeline({
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <SummaryChip label="Em andamento" value={active} />
+        <SummaryChip label="Vigentes" value={active} />
         <SummaryChip
           label="Vencem em 30 dias"
           value={expiring}
@@ -100,7 +106,9 @@ export function ContractsTimeline({
           const style = STATE_STYLES[item.state];
           const isEnded = item.state === "encerrado";
           const daysLabel = isEnded
-            ? "Encerrado há"
+            ? item.early
+              ? "Faltavam"
+              : "Encerrado há"
             : item.remainingDays === 0
               ? "Termina"
               : "Faltam";
@@ -120,6 +128,11 @@ export function ContractsTimeline({
                   <span className="mt-1 inline-block rounded-full bg-secondary px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
                     {item.produto}
                   </span>
+                  {item.opStatus && (
+                    <span className="ml-1.5 text-[11px] text-muted-foreground">
+                      Operação: {isEnded ? "Encerrado" : item.opStatus}
+                    </span>
+                  )}
                 </div>
                 <span
                   className={cn(
@@ -127,7 +140,9 @@ export function ContractsTimeline({
                     style.badge,
                   )}
                 >
-                  {style.badgeLabel}
+                  {isEnded && item.early
+                    ? "Encerrado antecipadamente"
+                    : style.badgeLabel}
                 </span>
               </div>
 
