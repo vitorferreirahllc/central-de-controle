@@ -105,8 +105,8 @@ export default async function SaudeClientePage() {
     existing.push(row);
     groups.set(key, existing);
   }
-  const orderedGroups = PRODUTO_ORDER.filter((p) => groups.has(p)).map(
-    (produto) => ({ produto, items: groups.get(produto)! }),
+  const orderedGroups = PRODUTO_ORDER.filter((p) => p !== "Sem produto" || groups.has(p)).map(
+    (produto) => ({ produto, items: groups.get(produto) ?? [] }),
   );
 
   return (
@@ -146,6 +146,11 @@ export default async function SaudeClientePage() {
             defaultOpen={false}
           >
             <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3">
+              {items.length === 0 && (
+                <p className="text-sm text-muted-foreground">
+                  Nenhuma operação neste produto ainda.
+                </p>
+              )}
               {items.map((c) => (
                 <ClientCard
                   key={c.id}
