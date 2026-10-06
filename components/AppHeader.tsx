@@ -9,6 +9,7 @@ const TITLES: Record<string, string> = {
   "/meta-ads": "Meta Ads",
   "/controle-operacoes": "Controle de Operações",
   "/operation-health-score": "Operation Health Score",
+  "/contratos": "Contratos",
 };
 
 export function AppHeader({

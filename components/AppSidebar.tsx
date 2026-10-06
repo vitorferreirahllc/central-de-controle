@@ -9,6 +9,7 @@ import {
   Megaphone,
   CalendarClock,
   HeartPulse,
+  FileText,
   ChevronLeft,
   ChevronRight,
   LogOut,
@@ -24,6 +25,7 @@ const NAV_ITEMS = [
   { href: "/meta-ads", label: "Meta Ads", icon: Megaphone },
   { href: "/controle-operacoes", label: "Controle de Operações", icon: CalendarClock },
   { href: "/operation-health-score", label: "Operation Health Score", icon: HeartPulse },
+  { href: "/contratos", label: "Contratos", icon: FileText },
 ];
 
 export function AppSidebar({

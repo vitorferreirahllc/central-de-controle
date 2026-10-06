@@ -1,18 +1,15 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import type { ClientContract, ClientStatus } from "@/lib/types";
+import type { ClientStatus } from "@/lib/types";
 import { formatProjectWeek } from "@/lib/calc";
 import {
   todayInBrasilia,
   effectiveStatus,
-  contractSituation,
-  formatDateBR,
 } from "@/lib/contracts";
 import { createClientStatus, deleteClientStatus } from "./actions";
 import { DeleteButton } from "@/components/DeleteButton";
 import { CollapsibleTable } from "@/components/CollapsibleTable";
 import { OperationsTimezones } from "@/components/OperationsTimezones";
-import { ContractsTimeline } from "@/components/ContractsTimeline";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-secondary px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring";
@@ -36,12 +33,11 @@ export default async function SemanaProjetoPage() {
 
   const { data: contractsData } = await supabase
     .from("client_contracts")
-    .select(
-      "id, client_status_id, produto, data_inicio, data_fim, resumo, client_status(client_name, status)",
-    );
-  const contracts = (contractsData ?? []) as unknown as ClientContract[];
+    .select("client_status_id, data_fim");
+  const endByClient = new Map(
+    (contractsData ?? []).map((c) => [c.client_status_id as number, c.data_fim as string]),
+  );
   const today = todayInBrasilia();
-  const contractByClient = new Map(contracts.map((c) => [c.client_status_id, c]));
 
   return (
     <div className="space-y-8">
@@ -126,7 +122,6 @@ export default async function SemanaProjetoPage() {
               <th className="px-4 py-3">Semana Projeto</th>
               <th className="px-4 py-3">Responsável</th>
               <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Contrato</th>
               <th className="px-4 py-3">Risco</th>
               <th className="px-4 py-3">Produto</th>
               <th className="px-4 py-3" />
@@ -135,17 +130,13 @@ export default async function SemanaProjetoPage() {
           <tbody className="divide-y divide-border">
             {rows.length === 0 && (
               <tr>
-                <td colSpan={9} className="px-4 py-6 text-center text-muted-foreground">
+                <td colSpan={8} className="px-4 py-6 text-center text-muted-foreground">
                   Nenhum cliente cadastrado ainda.
                 </td>
               </tr>
             )}
             {rows.map((c) => {
-              const contract = contractByClient.get(c.id);
-              const status = effectiveStatus(c.status, contract?.data_fim, today);
-              const situation = contract
-                ? contractSituation(contract.data_fim, c.status, today)
-                : null;
+              const status = effectiveStatus(c.status, endByClient.get(c.id), today);
               return (
               <tr key={c.id} className="hover:bg-secondary/50">
                 <td className="px-4 py-3 text-foreground">{c.client_name}</td>
@@ -160,23 +151,6 @@ export default async function SemanaProjetoPage() {
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
                   {status}
-                </td>
-                <td className="px-4 py-3 text-xs">
-                  {contract && situation ? (
-                    <span
-                      className={
-                        situation === "vigente"
-                          ? "text-success"
-                          : "text-muted-foreground"
-                      }
-                    >
-                      {situation === "vigente"
-                        ? `Vigente até ${formatDateBR(contract.data_fim)}`
-                        : "Encerrado"}
-                    </span>
-                  ) : (
-                    <span className="text-muted-foreground">-</span>
-                  )}
                 </td>
                 <td className={`px-4 py-3 font-medium ${riscoColor(c.risco)}`}>
                   {c.risco}
@@ -203,8 +177,6 @@ export default async function SemanaProjetoPage() {
           </tbody>
         </table>
       </CollapsibleTable>
-
-      <ContractsTimeline contracts={contracts} today={today} />
 
       <OperationsTimezones />
     </div>
