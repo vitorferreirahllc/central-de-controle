@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import type { ClientStatus } from "@/lib/types";
+import type { ClientContract, ClientStatus } from "@/lib/types";
 import { formatProjectWeek } from "@/lib/calc";
+import { todayInBrasilia } from "@/lib/contracts";
 import { createClientStatus, deleteClientStatus } from "./actions";
 import { DeleteButton } from "@/components/DeleteButton";
 import { CollapsibleTable } from "@/components/CollapsibleTable";
 import { OperationsTimezones } from "@/components/OperationsTimezones";
+import { ContractsTimeline } from "@/components/ContractsTimeline";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-secondary px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-ring";
@@ -26,6 +28,13 @@ export default async function SemanaProjetoPage() {
     .order("client_name");
 
   const rows = (data ?? []) as ClientStatus[];
+
+  const { data: contractsData } = await supabase
+    .from("client_contracts")
+    .select(
+      "id, client_status_id, produto, data_inicio, data_fim, resumo, client_status(client_name)",
+    );
+  const contracts = (contractsData ?? []) as unknown as ClientContract[];
 
   return (
     <div className="space-y-8">
@@ -162,6 +171,8 @@ export default async function SemanaProjetoPage() {
           </tbody>
         </table>
       </CollapsibleTable>
+
+      <ContractsTimeline contracts={contracts} today={todayInBrasilia()} />
 
       <OperationsTimezones />
     </div>

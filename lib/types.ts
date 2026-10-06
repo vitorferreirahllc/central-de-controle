@@ -32,6 +32,16 @@ export type Status = "Onboarding" | "Operando" | "Pausado" | "Encerrado";
 export type Risco = "Baixo" | "Médio" | "Alto";
 export type Produto = "Food Growth" | "Scale" | "Spot";
 
+export type ClientContract = {
+  id: number;
+  client_status_id: number;
+  produto: string;
+  data_inicio: string;
+  data_fim: string;
+  resumo: string | null;
+  client_status: { client_name: string } | null;
+};
+
 export type ClientStatus = {
   id: number;
   client_name: string;
