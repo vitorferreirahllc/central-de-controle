@@ -24,7 +24,7 @@ const RISCO_STYLES: Record<Risco, { border: string; badge: string }> = {
   },
 };
 
-const PRODUTO_ORDER = ["Food Growth", "Scale", "Spot", "Sem produto"] as const;
+const PRODUTO_ORDER = ["Food Growth", "Food Scale", "Food Spot", "Food Foundation", "Sem produto"] as const;
 
 function ClientCard({ c, status }: { c: ClientStatus; status: string }) {
   const style = RISCO_STYLES[c.risco];

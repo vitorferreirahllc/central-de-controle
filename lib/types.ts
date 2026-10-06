@@ -30,7 +30,7 @@ export type MetaAdsEntry = {
 
 export type Status = "Onboarding" | "Operando" | "Pausado" | "Encerrado";
 export type Risco = "Baixo" | "Médio" | "Alto";
-export type Produto = "Food Growth" | "Scale" | "Spot";
+export type Produto = "Food Growth" | "Food Scale" | "Food Spot" | "Food Foundation";
 
 export type ClientContract = {
   id: number;

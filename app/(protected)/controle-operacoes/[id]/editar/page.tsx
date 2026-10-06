@@ -128,8 +128,9 @@ export default async function EditarClientStatusPage({
           >
             <option value="">Sem produto</option>
             <option value="Food Growth">Food Growth</option>
-            <option value="Scale">Scale</option>
-            <option value="Spot">Spot</option>
+            <option value="Food Scale">Food Scale</option>
+            <option value="Food Spot">Food Spot</option>
+            <option value="Food Foundation">Food Foundation</option>
           </select>
         </div>
 
