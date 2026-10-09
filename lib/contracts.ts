@@ -76,3 +76,84 @@ export function contractSituation(
 ): "vigente" | "encerrado" {
   return contractEnd < today || status === "Encerrado" ? "encerrado" : "vigente";
 }
+
+export type OpportunityKind =
+  | "vencido"
+  | "renovar_agora"
+  | "antecipado"
+  | "preparar";
+
+export type Opportunity = {
+  id: number;
+  name: string;
+  produto: string;
+  kind: OpportunityKind;
+  /** Quanto menor, mais urgente. */
+  priority: number;
+  title: string;
+  action: string;
+  endDate: string;
+};
+
+const PREPARE_DAYS = 60;
+const COLD_AFTER_DAYS = 90;
+
+/**
+ * Transforma o estado dos contratos em oportunidades comerciais, só com o que
+ * pede ação: vencidos recentes, vencendo em até 60 dias e encerramentos
+ * antecipados. Contratos vencidos há mais de 90 dias esfriam e saem da lista.
+ */
+export function buildOpportunities(
+  items: {
+    id: number;
+    name: string;
+    produto: string;
+    fim: string;
+    remainingDays: number;
+    state: ContractState;
+    early: boolean;
+  }[],
+): Opportunity[] {
+  const out: Opportunity[] = [];
+  for (const i of items) {
+    const base = { id: i.id, name: i.name, produto: i.produto, endDate: i.fim };
+    if (i.early) {
+      out.push({
+        ...base,
+        kind: "antecipado",
+        priority: 2,
+        title: `Encerrado antes do prazo (faltavam ${formatDays(i.remainingDays)})`,
+        action: "Entender o motivo e tentar reter",
+      });
+    } else if (i.state === "encerrado") {
+      const since = -i.remainingDays;
+      if (since > COLD_AFTER_DAYS) continue;
+      out.push({
+        ...base,
+        kind: "vencido",
+        priority: since <= 30 ? 0 : 3,
+        title: `Contrato vencido há ${formatDays(since)}`,
+        action: "Propor renovação ou upsell",
+      });
+    } else if (i.remainingDays <= 30) {
+      out.push({
+        ...base,
+        kind: "renovar_agora",
+        priority: 1,
+        title: `Vence em ${formatDays(i.remainingDays)}`,
+        action: "Fechar a renovação agora",
+      });
+    } else if (i.remainingDays <= PREPARE_DAYS) {
+      out.push({
+        ...base,
+        kind: "preparar",
+        priority: 4,
+        title: `Vence em ${formatDays(i.remainingDays)}`,
+        action: "Montar a proposta de renovação",
+      });
+    }
+  }
+  return out.sort(
+    (a, b) => a.priority - b.priority || a.endDate.localeCompare(b.endDate),
+  );
+}

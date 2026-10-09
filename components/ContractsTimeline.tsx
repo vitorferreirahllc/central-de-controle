@@ -3,8 +3,10 @@ import {
   contractProgress,
   formatDateBR,
   formatDays,
+  buildOpportunities,
   type ContractState,
 } from "@/lib/contracts";
+import { OpportunityAlerts } from "@/components/OpportunityAlerts";
 import type { ClientContract } from "@/lib/types";
 
 const STATE_STYLES: Record<
@@ -72,6 +74,7 @@ export function ContractsTimeline({
     (i) => i.state === "atencao" || i.state === "critico",
   ).length;
   const ended = items.length - active;
+  const opportunities = buildOpportunities(items);
 
   return (
     <section className="space-y-6">
@@ -93,6 +96,7 @@ export function ContractsTimeline({
           tone={expiring > 0 ? "warning" : undefined}
         />
         <SummaryChip label="Encerrados" value={ended} />
+        <OpportunityAlerts opportunities={opportunities} />
       </div>
 
       {items.length === 0 && (
