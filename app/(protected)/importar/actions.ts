@@ -8,7 +8,7 @@ import { parseWeeklyReports } from "@/lib/reportParser";
 export type ImportState = {
   status: "done" | "error";
   message?: string;
-  imported: { client: string; period: string; delivery: boolean; meta: boolean }[];
+  imported: { client: string; period: string; delivery: boolean; meta: boolean; metaMissingResults: boolean }[];
   skipped: { client: string; period: string; reason: string }[];
   warnings: string[];
 } | null;
@@ -136,14 +136,20 @@ export async function importReports(
           start_date: w.start,
           end_date: w.end,
           invested: w.metaSpend,
-          results: 0,
+          results: w.metaResults ?? 0,
           revenue_generated: w.metaReturn,
         });
         metaSaved = !metaError;
       }
     }
 
-    imported.push({ client: w.clientName, period, delivery: true, meta: metaSaved });
+    imported.push({
+      client: w.clientName,
+      period,
+      delivery: true,
+      meta: metaSaved,
+      metaMissingResults: metaSaved && w.metaResults == null,
+    });
   }
 
   revalidatePath("/delivery-apps");

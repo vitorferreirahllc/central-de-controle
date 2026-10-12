@@ -9,6 +9,7 @@ export type ParsedWeek = {
   payout: number | null;
   metaSpend: number | null;
   metaReturn: number | null;
+  metaResults: number | null;
 };
 
 export type ParseResult = {
@@ -109,6 +110,7 @@ export function parseWeeklyReports(
       payout: pick(body, /Valor l[ií]quido de repasse(?:\s*\(delivery\))?\s+US\$\s*([\d.,]+)/i),
       metaSpend: pick(body, /Meta Ads\s*[—–-]\s*valor gasto\s+US\$\s*([\d.,]+)/i),
       metaReturn: pick(body, /Meta Ads\s*[—–-]\s*resultados[^\n]*?US\$\s*([\d.,]+)/i),
+      metaResults: pick(body, /Meta Ads\s*[—–-]\s*compras(?:\s*\(quantidade\))?\s+(\d+)/i),
     });
   }
 
