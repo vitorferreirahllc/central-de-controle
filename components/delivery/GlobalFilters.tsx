@@ -14,6 +14,9 @@ export function GlobalFilters({
   clients,
   periodLabel,
   compareLabel,
+  weeks,
+  selectedWeek,
+  onWeekChange,
 }: {
   period: PeriodOption;
   onPeriodChange: (value: PeriodOption) => void;
@@ -22,6 +25,9 @@ export function GlobalFilters({
   clients: string[];
   periodLabel?: string;
   compareLabel?: string | null;
+  weeks?: { value: string; label: string }[];
+  selectedWeek?: string;
+  onWeekChange?: (value: string) => void;
 }) {
   return (
     <div className="flex flex-wrap items-center gap-3">
@@ -52,6 +58,21 @@ export function GlobalFilters({
           </option>
         ))}
       </select>
+
+      {period === "semana_especifica" && weeks && onWeekChange && (
+        <select
+          value={selectedWeek ?? ""}
+          onChange={(e) => onWeekChange(e.target.value)}
+          aria-label="Escolher semana"
+          className={selectClass}
+        >
+          {weeks.map((w) => (
+            <option key={w.value} value={w.value}>
+              {w.label}
+            </option>
+          ))}
+        </select>
+      )}
 
       <select
         value={client}

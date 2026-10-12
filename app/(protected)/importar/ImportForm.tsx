@@ -77,7 +77,7 @@ export function ImportForm() {
             {state.imported.some((i) => i.metaMissingResults) && (
               <p className="mt-3 text-xs text-warning">
                 O Meta Ads entrou com gasto e retorno, mas sem a linha
-                "Meta Ads — compras (quantidade)" — os resultados ficaram em 0.
+                &quot;Meta Ads — compras (quantidade)&quot; — os resultados ficaram em 0.
               </p>
             )}
           </div>

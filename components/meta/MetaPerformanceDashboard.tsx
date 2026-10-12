@@ -9,7 +9,7 @@ import { MetaOperationsTable, type MetaOperationRow } from "@/components/meta/Me
 import { MetaHistoryTable } from "@/components/meta/MetaHistoryTable";
 import { MetaClientDetail } from "@/components/meta/MetaClientDetail";
 import { deleteMetaAdsEntry } from "@/app/(protected)/meta-ads/actions";
-import { resolvePeriod, aggregateMeta, type PeriodOption, type MetaAggregate } from "@/lib/period";
+import { resolvePeriod, listWeeks, aggregateMeta, type PeriodOption, type MetaAggregate } from "@/lib/period";
 import { percentDelta } from "@/lib/calc";
 import { buildMetaRadarFindings } from "@/lib/radar";
 import type { MetaAdsEntry } from "@/lib/types";
@@ -44,7 +44,13 @@ export function MetaPerformanceDashboard({ rows, clients }: { rows: MetaAdsEntry
   const [openClient, setOpenClient] = useState<string | null>(null);
 
   const filteredClients = useMemo(() => (clientFilter === "Todos" ? clients : [clientFilter]), [clientFilter, clients]);
-  const buckets = useMemo(() => resolvePeriod(period, rows), [period, rows]);
+  const weeks = useMemo(() => listWeeks(rows), [rows]);
+  const [pickedWeek, setPickedWeek] = useState<string | null>(null);
+  const selectedWeek = pickedWeek ?? weeks[0]?.value;
+  const buckets = useMemo(
+    () => resolvePeriod(period, rows, selectedWeek),
+    [period, rows, selectedWeek],
+  );
 
   const perClient: MetaOperationRow[] = useMemo(
     () =>
@@ -102,6 +108,9 @@ export function MetaPerformanceDashboard({ rows, clients }: { rows: MetaAdsEntry
         clients={clients}
         periodLabel={buckets.currentLabel}
         compareLabel={buckets.previousLabel}
+        weeks={weeks}
+        selectedWeek={selectedWeek}
+        onWeekChange={setPickedWeek}
       />
       <MetaKpiGrid totals={totals} compareLabel={buckets.previousLabel} />
       <MetaRadar findings={findings} />

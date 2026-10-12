@@ -11,6 +11,9 @@ export function PerformanceHeader({
   subtitle = "Visão consolidada da performance das operações.",
   periodLabel,
   compareLabel,
+  weeks,
+  selectedWeek,
+  onWeekChange,
 }: {
   period: PeriodOption;
   onPeriodChange: (value: PeriodOption) => void;
@@ -21,6 +24,9 @@ export function PerformanceHeader({
   subtitle?: string;
   periodLabel?: string;
   compareLabel?: string | null;
+  weeks?: { value: string; label: string }[];
+  selectedWeek?: string;
+  onWeekChange?: (value: string) => void;
 }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-4">
@@ -40,6 +46,9 @@ export function PerformanceHeader({
         clients={clients}
         periodLabel={periodLabel}
         compareLabel={compareLabel}
+        weeks={weeks}
+        selectedWeek={selectedWeek}
+        onWeekChange={onWeekChange}
       />
     </div>
   );

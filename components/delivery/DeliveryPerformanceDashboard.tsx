@@ -14,6 +14,7 @@ import { ClientPerformanceDetail } from "@/components/delivery/ClientPerformance
 import { deleteDeliveryEntry } from "@/app/(protected)/delivery-apps/actions";
 import {
   resolvePeriod,
+  listWeeks,
   aggregateDelivery,
   type PeriodOption,
 } from "@/lib/period";
@@ -49,7 +50,13 @@ export function DeliveryPerformanceDashboard({
     [clientFilter, clients],
   );
 
-  const buckets = useMemo(() => resolvePeriod(period, rows), [period, rows]);
+  const weeks = useMemo(() => listWeeks(rows), [rows]);
+  const [pickedWeek, setPickedWeek] = useState<string | null>(null);
+  const selectedWeek = pickedWeek ?? weeks[0]?.value;
+  const buckets = useMemo(
+    () => resolvePeriod(period, rows, selectedWeek),
+    [period, rows, selectedWeek],
+  );
 
   const perClient = useMemo(() => {
     return filteredClients.map((name) => {
@@ -131,6 +138,9 @@ export function DeliveryPerformanceDashboard({
         clients={clients}
         periodLabel={buckets.currentLabel}
         compareLabel={buckets.previousLabel}
+        weeks={weeks}
+        selectedWeek={selectedWeek}
+        onWeekChange={setPickedWeek}
       />
 
       <KpiGrid totals={totals} compareLabel={buckets.previousLabel} />

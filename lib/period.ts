@@ -5,7 +5,8 @@ export type PeriodOption =
   | "semana_anterior"
   | "ultimas_4_semanas"
   | "este_mes"
-  | "mes_anterior";
+  | "mes_anterior"
+  | "semana_especifica";
 
 export const PERIOD_OPTIONS: { value: PeriodOption; label: string }[] = [
   { value: "esta_semana", label: "Esta semana" },
@@ -13,6 +14,7 @@ export const PERIOD_OPTIONS: { value: PeriodOption; label: string }[] = [
   { value: "ultimas_4_semanas", label: "Últimas 4 semanas" },
   { value: "este_mes", label: "Este mês" },
   { value: "mes_anterior", label: "Mês anterior" },
+  { value: "semana_especifica", label: "Semana específica…" },
 ];
 
 const MONTH_ABBR = [
@@ -61,11 +63,32 @@ const EMPTY_BUCKETS: PeriodBuckets = {
   previousLabel: null,
 };
 
+/** Semanas com lançamento, da mais recente para a mais antiga. */
+export function listWeeks(rows: WeekRow[]): { value: string; label: string }[] {
+  return distinctWeeks(rows)
+    .reverse()
+    .map((w) => ({ value: w.start_date, label: formatPeriodLabel(w.start_date, w.end_date) }));
+}
+
 export function resolvePeriod(
   option: PeriodOption,
   rows: WeekRow[],
+  selectedWeek?: string,
 ): PeriodBuckets {
   const weeks = distinctWeeks(rows);
+
+  if (option === "semana_especifica") {
+    const idx = weeks.findIndex((w) => w.start_date === selectedWeek);
+    if (idx < 0) return EMPTY_BUCKETS;
+    const cur = weeks[idx];
+    const prev = idx > 0 ? weeks[idx - 1] : null;
+    return {
+      currentStartDates: new Set([cur.start_date]),
+      previousStartDates: prev ? new Set([prev.start_date]) : null,
+      currentLabel: formatPeriodLabel(cur.start_date, cur.end_date),
+      previousLabel: prev ? formatPeriodLabel(prev.start_date, prev.end_date) : null,
+    };
+  }
 
   if (option === "esta_semana" || option === "semana_anterior") {
     const offset = option === "esta_semana" ? 1 : 2;
