@@ -10,6 +10,7 @@ import {
   CalendarClock,
   HeartPulse,
   FileText,
+  Upload,
   ChevronLeft,
   ChevronRight,
   LogOut,
@@ -26,6 +27,7 @@ const NAV_ITEMS = [
   { href: "/controle-operacoes", label: "Controle de Operações", icon: CalendarClock },
   { href: "/operation-health-score", label: "Operation Health Score", icon: HeartPulse },
   { href: "/contratos", label: "Contratos", icon: FileText },
+  { href: "/importar", label: "Importar relatórios", icon: Upload },
 ];
 
 export function AppSidebar({

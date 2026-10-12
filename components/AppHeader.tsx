@@ -10,6 +10,7 @@ const TITLES: Record<string, string> = {
   "/controle-operacoes": "Controle de Operações",
   "/operation-health-score": "Operation Health Score",
   "/contratos": "Contratos",
+  "/importar": "Importar relatórios",
 };
 
 export function AppHeader({
