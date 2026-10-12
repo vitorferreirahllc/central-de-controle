@@ -9,6 +9,8 @@ export function PerformanceHeader({
   clients,
   title = "Performance Delivery",
   subtitle = "Visão consolidada da performance das operações.",
+  periodLabel,
+  compareLabel,
 }: {
   period: PeriodOption;
   onPeriodChange: (value: PeriodOption) => void;
@@ -17,6 +19,8 @@ export function PerformanceHeader({
   clients: string[];
   title?: string;
   subtitle?: string;
+  periodLabel?: string;
+  compareLabel?: string | null;
 }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-4">
@@ -34,6 +38,8 @@ export function PerformanceHeader({
         client={client}
         onClientChange={onClientChange}
         clients={clients}
+        periodLabel={periodLabel}
+        compareLabel={compareLabel}
       />
     </div>
   );

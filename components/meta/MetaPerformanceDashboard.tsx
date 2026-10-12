@@ -100,6 +100,8 @@ export function MetaPerformanceDashboard({ rows, clients }: { rows: MetaAdsEntry
         client={clientFilter}
         onClientChange={setClientFilter}
         clients={clients}
+        periodLabel={buckets.currentLabel}
+        compareLabel={buckets.previousLabel}
       />
       <MetaKpiGrid totals={totals} compareLabel={buckets.previousLabel} />
       <MetaRadar findings={findings} />

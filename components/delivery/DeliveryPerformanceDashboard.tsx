@@ -129,6 +129,8 @@ export function DeliveryPerformanceDashboard({
         client={clientFilter}
         onClientChange={setClientFilter}
         clients={clients}
+        periodLabel={buckets.currentLabel}
+        compareLabel={buckets.previousLabel}
       />
 
       <KpiGrid totals={totals} compareLabel={buckets.previousLabel} />
