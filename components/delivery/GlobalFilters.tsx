@@ -25,18 +25,6 @@ export function GlobalFilters({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <select
-        value={period}
-        onChange={(e) => onPeriodChange(e.target.value as PeriodOption)}
-        className={selectClass}
-      >
-        {PERIOD_OPTIONS.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-
       {periodLabel && (
         <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
           <CalendarDays className="h-4 w-4 text-muted-foreground" />
@@ -52,6 +40,18 @@ export function GlobalFilters({
           </div>
         </div>
       )}
+
+      <select
+        value={period}
+        onChange={(e) => onPeriodChange(e.target.value as PeriodOption)}
+        className={selectClass}
+      >
+        {PERIOD_OPTIONS.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
 
       <select
         value={client}
