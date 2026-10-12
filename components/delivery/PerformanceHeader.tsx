@@ -7,21 +7,25 @@ export function PerformanceHeader({
   client,
   onClientChange,
   clients,
+  title = "Performance Delivery",
+  subtitle = "Visão consolidada da performance das operações.",
 }: {
   period: PeriodOption;
   onPeriodChange: (value: PeriodOption) => void;
   client: string;
   onClientChange: (value: string) => void;
   clients: string[];
+  title?: string;
+  subtitle?: string;
 }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-4">
       <div>
         <h1 className="text-xl font-semibold text-foreground">
-          Performance Delivery
+          {title}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Visão consolidada da performance das operações.
+          {subtitle}
         </p>
       </div>
       <GlobalFilters

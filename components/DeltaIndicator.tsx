@@ -7,10 +7,13 @@ export function DeltaIndicator({
   value,
   unit = "percent",
   size = "sm",
+  inverse = false,
 }: {
   value: number | null;
   unit?: DeltaUnit;
   size?: "sm" | "md";
+  /** Quando menor é melhor (ex.: custo por resultado): inverte verde/vermelho. */
+  inverse?: boolean;
 }) {
   if (value == null) {
     return (
@@ -20,9 +23,10 @@ export function DeltaIndicator({
 
   const isFlat = Math.abs(value) < 0.05;
   const isUp = value > 0;
+  const good = inverse ? !isUp : isUp;
   const color = isFlat
     ? "text-muted-foreground"
-    : isUp
+    : good
       ? "text-success"
       : "text-destructive";
   const Icon = isFlat ? Minus : isUp ? ArrowUp : ArrowDown;

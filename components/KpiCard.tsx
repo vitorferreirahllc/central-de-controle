@@ -8,6 +8,7 @@ export function KpiCard({
   delta,
   deltaUnit = "percent",
   compareLabel,
+  deltaInverse = false,
 }: {
   label: string;
   value: string;
@@ -16,6 +17,7 @@ export function KpiCard({
   delta?: number | null;
   deltaUnit?: DeltaUnit;
   compareLabel?: string;
+  deltaInverse?: boolean;
 }) {
   const showDelta = delta !== undefined;
 
@@ -39,7 +41,7 @@ export function KpiCard({
 
         {showDelta && (
           <div className="mt-2 flex items-center gap-2">
-            <DeltaIndicator value={delta ?? null} unit={deltaUnit} />
+            <DeltaIndicator value={delta ?? null} unit={deltaUnit} inverse={deltaInverse} />
             {compareLabel && (
               <span className="text-[11px] text-muted-foreground">
                 {compareLabel}

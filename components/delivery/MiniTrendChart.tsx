@@ -8,15 +8,17 @@ export function MiniTrendChart({
   name,
   data,
   valueFormatter,
+  lowerIsBetter = false,
 }: {
   name: string;
   data: { label: string; value: number }[];
   valueFormatter: (value: number) => string;
+  lowerIsBetter?: boolean;
 }) {
   const first = data.length > 0 ? data[0].value : 0;
   const last = data.length > 0 ? data[data.length - 1].value : 0;
   const delta = data.length >= 2 ? percentDelta(last, first) : null;
-  const isDown = delta != null && delta < 0;
+  const isDown = delta != null && (lowerIsBetter ? delta > 0 : delta < 0);
   const color = delta == null
     ? "var(--muted-foreground)"
     : isDown
@@ -27,7 +29,7 @@ export function MiniTrendChart({
     <div className="rounded-xl border border-border bg-card p-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-foreground">{name}</h3>
-        <DeltaIndicator value={delta} />
+        <DeltaIndicator value={delta} inverse={lowerIsBetter} />
       </div>
       <p className="mt-1 text-xs text-muted-foreground">
         {data.length > 0 ? valueFormatter(last) : "Sem dados"}

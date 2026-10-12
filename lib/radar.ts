@@ -1,5 +1,5 @@
 import { percentDelta } from "@/lib/calc";
-import type { DeliveryAggregate } from "@/lib/period";
+import type { DeliveryAggregate, MetaAggregate } from "@/lib/period";
 
 export type RadarSeverity = "critico" | "atencao";
 
@@ -96,6 +96,89 @@ export function buildRadarFindings(
     .sort((a, b) => {
       if (a.severity !== b.severity) return a.severity === "critico" ? -1 : 1;
       return (a.revenueDelta ?? 0) - (b.revenueDelta ?? 0);
+    })
+    .slice(0, MAX_FINDINGS);
+}
+
+export type MetaRadarFinding = {
+  client: string;
+  severity: RadarSeverity;
+  roasDelta: number | null;
+  resultsDelta: number | null;
+  cprDelta: number | null;
+  reasons: string[];
+};
+
+const ROAS_DROP_ATTENTION = -20;
+const ROAS_DROP_CRITICAL = -35;
+const RESULTS_DROP_ATTENTION = -20;
+const CPR_RISE_ATTENTION = 20;
+const ROAS_FLOOR = 2;
+
+function metaRoas(a: MetaAggregate) {
+  return a.invested > 0 ? a.revenue / a.invested : null;
+}
+function metaCpr(a: MetaAggregate) {
+  return a.results > 0 ? a.invested / a.results : null;
+}
+
+/** Regras só de evidência (sem causa): queda de ROAS, custo por resultado subindo, menos resultados e ROAS baixo. */
+export function buildMetaRadarFindings(
+  clients: {
+    name: string;
+    current: MetaAggregate | null;
+    previous: MetaAggregate | null;
+  }[],
+): MetaRadarFinding[] {
+  const findings: MetaRadarFinding[] = [];
+
+  for (const c of clients) {
+    if (!c.current) continue;
+    const roasNow = metaRoas(c.current);
+    const roasPrev = c.previous ? metaRoas(c.previous) : null;
+    const cprNow = metaCpr(c.current);
+    const cprPrev = c.previous ? metaCpr(c.previous) : null;
+
+    const roasDelta = roasNow != null ? percentDelta(roasNow, roasPrev) : null;
+    const cprDelta = cprNow != null ? percentDelta(cprNow, cprPrev) : null;
+    const resultsDelta = c.previous
+      ? percentDelta(c.current.results, c.previous.results)
+      : null;
+
+    let severity: RadarSeverity | null = null;
+    const reasons: string[] = [];
+
+    if (roasDelta != null && roasDelta <= ROAS_DROP_CRITICAL) {
+      severity = "critico";
+      reasons.push("Queda crítica de ROAS");
+    } else if (roasDelta != null && roasDelta <= ROAS_DROP_ATTENTION) {
+      severity = "atencao";
+      reasons.push("Queda de ROAS");
+    }
+    if (cprDelta != null && cprDelta >= CPR_RISE_ATTENTION) {
+      severity = severity ?? "atencao";
+      reasons.push("Custo por resultado subindo");
+    }
+    if (resultsDelta != null && resultsDelta <= RESULTS_DROP_ATTENTION) {
+      severity = severity ?? "atencao";
+      reasons.push("Menos resultados");
+    }
+    if (c.current.invested > 0 && c.current.revenue === 0) {
+      severity = severity ?? "atencao";
+      reasons.push("Sem retorno registrado");
+    } else if (roasNow != null && roasNow < ROAS_FLOOR) {
+      severity = severity ?? "atencao";
+      reasons.push("ROAS abaixo de 2x");
+    }
+
+    if (!severity) continue;
+    findings.push({ client: c.name, severity, roasDelta, resultsDelta, cprDelta, reasons });
+  }
+
+  return findings
+    .sort((a, b) => {
+      if (a.severity !== b.severity) return a.severity === "critico" ? -1 : 1;
+      return (a.roasDelta ?? 0) - (b.roasDelta ?? 0);
     })
     .slice(0, MAX_FINDINGS);
 }

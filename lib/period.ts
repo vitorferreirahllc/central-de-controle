@@ -154,3 +154,27 @@ export function aggregateDelivery<
     rating: ratings.length ? ratings.reduce((s, v) => s + v, 0) / ratings.length : null,
   };
 }
+
+export type MetaAggregate = {
+  invested: number;
+  results: number;
+  revenue: number;
+};
+
+/** Agrega os lançamentos de Meta Ads de um cliente nas semanas do período. Null se não houver lançamento. */
+export function aggregateMeta<
+  T extends {
+    start_date: string;
+    invested: number;
+    results: number;
+    revenue_generated: number;
+  },
+>(rows: T[], startDates: Set<string>): MetaAggregate | null {
+  const matched = rows.filter((r) => startDates.has(r.start_date));
+  if (matched.length === 0) return null;
+  return {
+    invested: matched.reduce((s, r) => s + r.invested, 0),
+    results: matched.reduce((s, r) => s + r.results, 0),
+    revenue: matched.reduce((s, r) => s + r.revenue_generated, 0),
+  };
+}
