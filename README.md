@@ -44,12 +44,36 @@ autenticação).
 
    Acesse http://localhost:3000 — você será redirecionado para `/login`.
 
+## Rodar em outra máquina
+
+Os dados ficam no Supabase (nuvem), então basta ter o código e as chaves:
+
+```bash
+git clone https://github.com/vitorferreirahllc/central-de-controle.git
+cd central-de-controle
+cp .env.local.example .env.local   # preencha com a URL e a anon key do projeto Supabase
+npm install
+npm run dev
+```
+
+As chaves **não** estão no GitHub (`.env.local` é ignorado pelo git): pegue no painel do Supabase
+(Project Settings → API) ou no painel da Vercel.
+
+**Recriar o banco em um projeto Supabase novo** (só se o atual for perdido): rode no SQL Editor, nesta
+ordem, `supabase/schema.sql`, `migration_client_status.sql`, `migration_delivery_rating_payout.sql`,
+`migration_client_produto.sql` e `migration_client_contracts.sql`; depois importe os CSVs do backup
+(`clients`, `client_status`, `client_contracts`, `delivery_entries`, `meta_ads_entries`). Os dados
+em si nunca vão para o GitHub.
+
 ## Estrutura
 
 - `/login` — tela de login (Supabase Auth).
 - `/dashboard` — consolidado mensal por cliente (Delivery Apps + Meta Ads), com seletor de mês.
-- `/delivery-apps` — formulário de lançamento semanal + tabela de lançamentos.
-- `/meta-ads` — formulário de lançamento semanal + tabela de lançamentos.
+- `/delivery-apps` e `/meta-ads` — dashboards de performance (KPIs, radar, tabela por operação, evolução, histórico).
+- `/controle-operacoes` — status, produto, risco e fusos horários das operações.
+- `/operation-health-score` — saúde das operações agrupada por produto.
+- `/contratos` — prazos dos contratos e alertas de oportunidade de renovação.
+- `/importar` — importação de relatórios semanais em PDF.
 
 Todas as rotas exceto `/login` exigem sessão ativa (verificado em `middleware.ts` e no layout de
 `app/(protected)`).
