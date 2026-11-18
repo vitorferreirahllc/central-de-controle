@@ -21,6 +21,7 @@ export const OPERATIONS_TIMEZONES: OperationTimezone[] = [
   { name: "That's Bananas", city: "Nepean", region: "ON", country: "Canadá", flag: "🇨🇦", timezone: "America/Toronto" },
   { name: "Emporio Brazilian Grill", city: "Houston", region: "TX", country: "Estados Unidos", flag: "🇺🇸", timezone: "America/Chicago" },
   { name: "Flauzino", city: "California", region: "CA", country: "Estados Unidos", flag: "🇺🇸", timezone: "America/Los_Angeles" },
+  { name: "Baiana Kitchen", city: "Seattle", region: "WA", country: "Estados Unidos", flag: "🇺🇸", timezone: "America/Los_Angeles" },
   { name: "Piroshky & Crepes European Bakery & Cafe", city: "Everett", region: "WA", country: "Estados Unidos", flag: "🇺🇸", timezone: "America/Los_Angeles" },
 ];
 
